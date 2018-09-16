@@ -5,7 +5,7 @@ const client = new Discord.Client();
 const { prefix, token } = require('./config');
 
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('../commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 client.on('ready', () => {
     console.log('Ready!');
