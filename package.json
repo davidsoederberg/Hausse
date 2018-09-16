@@ -1,0 +1,29 @@
+{
+  "name": "aktiebotdiscord",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "David Söderberg",
+  "license": "ISC",
+  "dependencies": {
+    "debug": "3.1.0",
+    "discord.js": "11.4.2",
+    "nodemon": "1.18.4"
+  },
+  "devDependencies": {
+    "eslint": "5.5.0",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "2.14.0"
+  },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "2500"
+  }
+}
