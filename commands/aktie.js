@@ -1,3 +1,5 @@
+const stockData = require('../avanza/search');
+
 module.exports = {
     'name': 'aktie',
     'aliases': ['stocks'],
@@ -5,13 +7,15 @@ module.exports = {
     'usage': '<aktie>',
     'description': 'PLACEHOLDER',
     execute(message, args) {
-        const stock = getStock(args);
-        if(!stock) {
-            return message.channel.send('Hittar ej');
-        }
+        const stock = findStock(args);
+        console.log(stock);
+        stock.then(function(res) {
+            message.reply(res);
+        });
     },
 };
 
-function getStock() {
-    return undefined;
+async function findStock(stockName) {
+    return await stockData.search(stockName);
 }
+
