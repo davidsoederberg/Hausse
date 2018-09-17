@@ -7,8 +7,15 @@ exports.search = function(stockName) {
                 console.log(error);
             }
             else{
-                const hits = JSON.parse(body);
-                resolve(hits.hits[0].topHits[0].name.toString());
+                const result = [];
+                const stockArray = JSON.parse(body).hits[0].topHits.slice(0, 2);
+                for(let i = 0; i < stockArray.length; i++) {
+                    const stockObject = {};
+                    stockObject.ticker = stockArray[i].tickerSymbol;
+                    stockObject.name = stockArray[i].name;
+                    result[i] = stockObject;
+                }
+                resolve(result);
             }
         });
     });
