@@ -9,12 +9,12 @@ exports.search = function(stockName) {
             else{
                 const result = [];
                 const stockArray = JSON.parse(body).hits[0].topHits.slice(0, 2);
-                for(let i = 0; i < stockArray.length; i++) {
+                stockArray.forEach((stock, index) => {
                     const stockObject = {};
-                    stockObject.ticker = stockArray[i].tickerSymbol;
-                    stockObject.name = stockArray[i].name;
-                    result[i] = stockObject;
-                }
+                    stockObject.ticker = stock.tickerSymbol;
+                    stockObject.name = stock.name;
+                    result[index] = stockObject;
+                });
                 resolve(result);
             }
         });

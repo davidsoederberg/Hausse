@@ -2,13 +2,12 @@ const stockData = require('../scripts/search');
 
 module.exports = {
     'name': 'aktie',
-    'aliases': ['stocks'],
+    'aliases': ['stock'],
     'args': true,
     'usage': '<aktie>',
     'description': 'PLACEHOLDER',
     execute(message, args) {
         const stock = findStock(args);
-        console.log(stock);
         stock.then(function(res) {
             message.reply(res);
         });
