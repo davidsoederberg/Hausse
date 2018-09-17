@@ -1,4 +1,4 @@
-const stockData = require('../avanza/search');
+const stockData = require('../scripts/search');
 
 module.exports = {
     'name': 'aktie',
