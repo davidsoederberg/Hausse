@@ -2,9 +2,9 @@ const request = require('request');
 
 exports.search = function(stockName) {
     return new Promise(function(resolve, reject) {
-        request(`https://www.avanza.se/_mobile/market/search/STOCK?query=${stockName}`, function(error, response, body) {
+        request(`https://www.avanza.se/_mobile/market/search/STOCK?query=${stockName}`, (error, response, body) => {
             if(error) {
-                console.log(error);
+                return reject('ERROR');
             }
             else{
                 const result = [];
@@ -12,7 +12,7 @@ exports.search = function(stockName) {
                 if(data.totalNumberOfHits === 0) {
                     return reject('Ingen träff');
                 }
-                const stockArray = data.hits[0].topHits.slice(0, 1);
+                const stockArray = data.hits[0].topHits.slice(0, 3);
                 stockArray.forEach((stock, index) => {
                     const stockObject = buildStockObject(stock);
                     if(!stockObject) {

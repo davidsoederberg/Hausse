@@ -9,12 +9,12 @@ module.exports = {
     'description': 'PLACEHOLDER',
     execute(message, args) {
         const stock = findStock(args);
-        stock.then(function(res) {
+        stock.then(res => {
             const realTimePrice = findRealTimePrice(res[0].ticker);
-            realTimePrice.then(function(price) {
+            realTimePrice.then(price => {
                 message.reply(`${res[0].name}: ${price} ${res[0].currency}`);
             });
-        }).catch(function(reject) {
+        }).catch(reject => {
             message.reply(reject);
         });
     },
@@ -28,4 +28,3 @@ async function findRealTimePrice(ticker) {
     const realTimePrice = await sharePrice.realTimeSharePrice(ticker);
     return realTimePrice[0].close;
 }
-
