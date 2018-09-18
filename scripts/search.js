@@ -23,7 +23,6 @@ exports.search = function(stockName) {
 };
 
 function buildStockObject(stock) {
-    console.log(stock);
     const stockObject = {};
     if(stock.flagCode === 'US' || stock.flagCode === 'SE') {
         stockObject.name = stock.name;
