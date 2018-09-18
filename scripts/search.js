@@ -10,8 +10,9 @@ exports.search = function(stockName) {
                 const result = [];
                 const stockArray = JSON.parse(body).hits[0].topHits.slice(0, 2);
                 stockArray.forEach((stock, index) => {
+                    console.log(stock);
                     const stockObject = {};
-                    stockObject.ticker = stock.tickerSymbol;
+                    stockObject.ticker = stock.tickerSymbol.replace(' ', '-');
                     stockObject.name = stock.name;
                     result[index] = stockObject;
                 });
