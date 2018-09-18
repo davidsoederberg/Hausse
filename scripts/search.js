@@ -2,19 +2,23 @@ const request = require('request');
 
 exports.search = function(stockName) {
     return new Promise(function(resolve, reject) {
-        request(`https://www.avanza.se/_mobile/market/search/STOCK?query=${stockName}`, function(error, response, body) {
+        request(`https://www.avanza.se/_mobile/market/search/STOCK?query=${stockName}`, (error, response, body) => {
             if(error) {
-                console.log(error);
+                return reject('ERROR');
             }
             else{
                 const result = [];
-                const stockArray = JSON.parse(body).hits[0].topHits.slice(0, 1);
-                stockArray.forEach((stock, index) => {
+                const data = JSON.parse(body);
+                if(data.totalNumberOfHits === 0) {
+                    return reject('Ingen träff');
+                }
+                const stockArray = data.hits[0].topHits.slice(0, 3);
+                stockArray.forEach(stock => {
                     const stockObject = buildStockObject(stock);
                     if(!stockObject) {
-                        return reject();
+                        return reject('Tyvärr så fungerar bara USA eller Sverige aktier just nu :C');
                     }
-                    result[index] = stockObject;
+                    result.push(stockObject);
                 });
                 resolve(result);
             }
@@ -25,7 +29,6 @@ exports.search = function(stockName) {
 function buildStockObject(stock) {
     const stockObject = {};
     if(stock.flagCode === 'US' || stock.flagCode === 'SE') {
-        console.log(stock.flagCode)
         stockObject.name = stock.name;
         stockObject.currency = stock.currency;
         stockObject.ticker = stock.tickerSymbol.replace(' ', '-');

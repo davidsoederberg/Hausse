@@ -8,14 +8,25 @@ module.exports = {
     'usage': '<aktie>',
     'description': 'PLACEHOLDER',
     execute(message, args) {
-        const stock = findStock(args);
-        stock.then(function(res) {
-            const realTimePrice = findRealTimePrice(res[0].ticker);
-            realTimePrice.then(function(price) {
-                message.reply(`${res[0].name}: ${price} ${res[0].currency}`);
-            });
-        }).catch(function() {
-            message.reply('Hittar ingen aktie med det namnet. Godtar bara US eller SE aktier just nu');
+        const stocks = findStock(args);
+        stocks.then(res => {
+            const stocksArr = mostRelevantStock(res);
+            if(stocksArr.length > 1) {
+                let stocksFound = '';
+                stocksArr.forEach(stock => {
+                    const ticker = fixTicker(stock.ticker, stock.currency);
+                    stocksFound += `**${stock.name}**: (${ticker}), `;
+                });
+                return message.reply(`Hittade dessa: ${stocksFound}`);
+            }
+            else {
+                const realTimePrice = findRealTimePrice(res[0].ticker);
+                realTimePrice.then(price => {
+                    message.reply(`${res[0].name}: ${price} ${res[0].currency}`);
+                });
+            }
+        }).catch(reject => {
+            message.reply(reject);
         });
     },
 };
@@ -29,3 +40,22 @@ async function findRealTimePrice(ticker) {
     return realTimePrice[0].close;
 }
 
+function mostRelevantStock(stocks) {
+    const relevantStocks = [];
+    stocks.forEach(stock => {
+        if(stock.currency === 'SEK') {
+            relevantStocks.push(stock);
+        }
+    });
+    if(relevantStocks.length === 0) {
+        return stocks[0];
+    }
+    return relevantStocks;
+}
+
+function fixTicker(ticker, currency) {
+    if(currency === 'SEK') {
+        return ticker.substring(0, ticker.length - 3);
+    }
+    return ticker;
+}
