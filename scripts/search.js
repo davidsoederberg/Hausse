@@ -12,7 +12,7 @@ exports.search = function(stockName) {
                 stockArray.forEach((stock, index) => {
                     const stockObject = buildStockObject(stock);
                     if(!stockObject) {
-                        reject();
+                        return reject();
                     }
                     result[index] = stockObject;
                 });
@@ -25,6 +25,7 @@ exports.search = function(stockName) {
 function buildStockObject(stock) {
     const stockObject = {};
     if(stock.flagCode === 'US' || stock.flagCode === 'SE') {
+        console.log(stock.flagCode)
         stockObject.name = stock.name;
         stockObject.currency = stock.currency;
         stockObject.ticker = stock.tickerSymbol.replace(' ', '-');
