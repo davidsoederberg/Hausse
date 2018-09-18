@@ -12,7 +12,9 @@ module.exports = {
         stock.then(function(res) {
             const realTimePrice = findRealTimePrice(res[0].ticker);
             realTimePrice.then(function(price) {
-                message.reply(`${res[0].name}: ${price}`);
+                message.reply(`${res[0].name}: ${price} ${res[0].currency}`);
+            }).catch(function() {
+                message.reply('Hittar ingen aktie med det namnet. Godtar bara US eller SE aktier just nu');
             });
         });
     },
