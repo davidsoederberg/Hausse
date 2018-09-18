@@ -8,11 +8,15 @@ exports.search = function(stockName) {
             }
             else{
                 const result = [];
-                const stockArray = JSON.parse(body).hits[0].topHits.slice(0, 1);
+                const data = JSON.parse(body);
+                if(data.totalNumberOfHits === 0) {
+                    return reject('Ingen träff');
+                }
+                const stockArray = data.hits[0].topHits.slice(0, 1);
                 stockArray.forEach((stock, index) => {
                     const stockObject = buildStockObject(stock);
                     if(!stockObject) {
-                        return reject();
+                        return reject('Tyvärr så fungerar bara USA eller Sverige aktier just nu :C');
                     }
                     result[index] = stockObject;
                 });
