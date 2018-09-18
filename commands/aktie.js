@@ -14,8 +14,8 @@ module.exports = {
             realTimePrice.then(function(price) {
                 message.reply(`${res[0].name}: ${price} ${res[0].currency}`);
             });
-        }).catch(function() {
-            message.reply('Hittar ingen aktie med det namnet. Godtar bara US eller SE aktier just nu');
+        }).catch(function(reject) {
+            message.reply(reject);
         });
     },
 };
