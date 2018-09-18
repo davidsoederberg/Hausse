@@ -13,12 +13,12 @@ exports.search = function(stockName) {
                     return reject('Ingen träff');
                 }
                 const stockArray = data.hits[0].topHits.slice(0, 3);
-                stockArray.forEach((stock, index) => {
+                stockArray.forEach(stock => {
                     const stockObject = buildStockObject(stock);
                     if(!stockObject) {
                         return reject('Tyvärr så fungerar bara USA eller Sverige aktier just nu :C');
                     }
-                    result[index] = stockObject;
+                    result.push(stockObject);
                 });
                 resolve(result);
             }
