@@ -26,7 +26,7 @@ module.exports = {
                 });
             }
             else {
-                message.reply(`${res[0].name}: ${res[0].price} ${res[0].currency}`);
+                message.reply(`${res[0].name}: ${res[0].price} ${res[0].currency} (15 min delay`);
             }
         }).catch(reject => {
             message.reply(reject);
