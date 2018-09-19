@@ -1,1 +1,1 @@
-# stockBotDiscord
+# Hausse - discordbot for stockprices
