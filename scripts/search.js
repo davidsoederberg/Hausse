@@ -15,9 +15,6 @@ exports.search = function(stockName) {
                 const stockArray = data.hits[0].topHits.slice(0, 3);
                 stockArray.forEach(stock => {
                     const stockObject = buildStockObject(stock);
-                    if(!stockObject) {
-                        return reject('Tyvärr så fungerar bara USA eller Sverige aktier just nu :C');
-                    }
                     result.push(stockObject);
                 });
                 resolve(result);
@@ -28,16 +25,10 @@ exports.search = function(stockName) {
 
 function buildStockObject(stock) {
     const stockObject = {};
-    if(stock.flagCode === 'US' || stock.flagCode === 'SE') {
-        stockObject.name = stock.name;
-        stockObject.currency = stock.currency;
-        stockObject.ticker = stock.tickerSymbol.replace(' ', '-');
-        if(stock.flagCode === 'SE') {
-            stockObject.ticker = stockObject.ticker.concat('.st');
-        }
-        return stockObject;
-    }
-    else {
-        return false;
-    }
+    stockObject.name = stock.name;
+    stockObject.currency = stock.currency;
+    stockObject.ticker = stock.flagCode === 'SE' ? stock.tickerSymbol.replace(' ', '-').concat('.st') : stock.tickerSymbol.replace(' ', '-');
+    stockObject.realtimePrice = (stock.flagCode === 'US' || stock.flagCode === 'SE');
+    stockObject.price = stock.lastPrice;
+    return stockObject;
 }

@@ -19,11 +19,14 @@ module.exports = {
                 });
                 return message.reply(`Hittade dessa: ${stocksFound}`);
             }
-            else {
+            else if(res[0].realtimePrice) {
                 const realTimePrice = findRealTimePrice(res[0].ticker);
                 realTimePrice.then(price => {
                     message.reply(`${res[0].name}: ${price} ${res[0].currency}`);
                 });
+            }
+            else {
+                message.reply(`${res[0].name}: ${res[0].price} ${res[0].currency} (15 min delay`);
             }
         }).catch(reject => {
             message.reply(reject);
