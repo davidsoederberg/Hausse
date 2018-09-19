@@ -20,13 +20,15 @@ module.exports = {
                 return message.reply(`Hittade dessa: ${stocksFound}`);
             }
             else if(res[0].realtimePrice) {
-                const realTimePrice = findRealTimePrice(res[0].ticker);
+                const stock = res[0];
+                const realTimePrice = findRealTimePrice(stock.ticker);
                 realTimePrice.then(price => {
-                    message.reply(`${res[0].name}: ${price} ${res[0].currency}`);
+                    message.reply(`${stock.name}: ${price} ${stock.currency}`);
                 });
             }
             else {
-                message.reply(`${res[0].name}: ${res[0].price} ${res[0].currency} (15 min delay`);
+                const stock = res[0];
+                message.reply(`${stock.name}: ${stock.price} ${stock.currency} (15 min fördröjning)`);
             }
         }).catch(reject => {
             message.reply(reject);
@@ -50,15 +52,9 @@ function mostRelevantStock(stocks) {
             relevantStocks.push(stock);
         }
     });
-    if(relevantStocks.length === 0) {
-        return stocks[0];
-    }
-    return relevantStocks;
+    return relevantStocks.length === 0 ? stocks[0] : relevantStocks;
 }
 
 function fixTicker(ticker, currency) {
-    if(currency === 'SEK') {
-        return ticker.substring(0, ticker.length - 3);
-    }
-    return ticker;
+    return currency === 'SEK' ? ticker.substring(0, ticker.length - 3) : ticker;
 }
