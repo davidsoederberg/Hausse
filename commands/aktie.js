@@ -10,25 +10,40 @@ module.exports = {
     execute(message, args) {
         const stocks = findStock(args);
         stocks.then(res => {
-            const stocksArr = mostRelevantStock(res);
-            if(stocksArr.length > 1) {
-                let stocksFound = '';
+            if(res.length > 1) {
+                const stocksArr = mostRelevantStock(res);
+                const realTimePricePromise = [];
                 stocksArr.forEach(stock => {
-                    const ticker = fixTicker(stock.ticker, stock.currency);
-                    stocksFound += `**${stock.name}**: (${ticker}), `;
+                    if(stock.country === 'SE' || stock.country === 'US') {
+                        const realTimePrice = findRealTimePrice(stock.ticker);
+                        realTimePricePromise.push(realTimePrice);
+                    }
+                    else {
+                        realTimePricePromise.push(new Promise(resolve => {
+                            resolve(stock.price);
+                        }));
+                    }
                 });
-                return message.reply(`Hittade dessa: ${stocksFound}`);
+                Promise.all(realTimePricePromise).then(prices => {
+                    let reply = 'Hittade dessa: ';
+                    stocksArr.forEach((stock, index) => {
+                        reply += `**${stock.name}** ${prices[index]}${stock.currency}`;
+                        reply += index + 1 === stocksArr.length ? '' : ', ';
+                    });
+                    reply += '!';
+                    return message.reply(reply);
+                });
             }
             else if(res[0].realtimePrice) {
                 const stock = res[0];
                 const realTimePrice = findRealTimePrice(stock.ticker);
                 realTimePrice.then(price => {
-                    message.reply(`${stock.name}: ${price} ${stock.currency}`);
+                    message.reply(`${stock.name}: ${price}${stock.currency}`);
                 });
             }
             else {
                 const stock = res[0];
-                message.reply(`${stock.name}: ${stock.price} ${stock.currency} (15 min fördröjning)`);
+                message.reply(`**${stock.name}**: ${stock.price}${stock.currency} (15 min fördröjning)`);
             }
         }).catch(reject => {
             message.reply(reject);
@@ -48,13 +63,9 @@ async function findRealTimePrice(ticker) {
 function mostRelevantStock(stocks) {
     const relevantStocks = [];
     stocks.forEach(stock => {
-        if(stock.currency === 'SEK') {
+        if(stock.country === 'SE') {
             relevantStocks.push(stock);
         }
     });
     return relevantStocks.length === 0 ? stocks[0] : relevantStocks;
-}
-
-function fixTicker(ticker, currency) {
-    return currency === 'SEK' ? ticker.substring(0, ticker.length - 3) : ticker;
 }

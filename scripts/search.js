@@ -1,7 +1,7 @@
 const request = require('request');
 
 exports.search = function(stockName) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         request(`https://www.avanza.se/_mobile/market/search/STOCK?query=${stockName}`, (error, response, body) => {
             if(error) {
                 return reject('ERROR');
@@ -30,5 +30,6 @@ function buildStockObject(stock) {
     stockObject.ticker = stock.flagCode === 'SE' ? stock.tickerSymbol.replace(' ', '-').concat('.st') : stock.tickerSymbol.replace(' ', '-');
     stockObject.realtimePrice = (stock.flagCode === 'US' || stock.flagCode === 'SE');
     stockObject.price = stock.lastPrice;
+    stockObject.country = stock.flagCode;
     return stockObject;
 }
