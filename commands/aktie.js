@@ -25,12 +25,11 @@ module.exports = {
                     }
                 });
                 Promise.all(realTimePricePromise).then(prices => {
-                    let reply = 'Hittade dessa: ';
+                    let reply = prices.length === 1 ? '' : 'Hittade dessa: ';
                     stocksArr.forEach((stock, index) => {
-                        reply += `**${stock.name}** ${prices[index]}${stock.currency}`;
+                        reply += `**${stock.name}** ${prices[index]} ${stock.currency}`;
                         reply += index + 1 === stocksArr.length ? '' : ', ';
                     });
-                    reply += '!';
                     return message.reply(reply);
                 });
             }
