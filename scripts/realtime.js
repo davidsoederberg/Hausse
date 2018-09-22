@@ -1,6 +1,6 @@
-const config = require('../config');
+// const config = require('../config');
 const Stocks = require('stocks.js');
-const stock = new Stocks({ 'apiKey': config.apiKey });
+const stock = new Stocks({ 'apiKey':  process.env.apiKey });
 
 const INTERVAL = '1min', AMOUNT = 1;
 
