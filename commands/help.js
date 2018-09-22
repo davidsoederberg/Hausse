@@ -1,4 +1,6 @@
-const { prefix } = require('../config');
+// const { prefix } = require('../config');
+
+const prefix = '!';
 
 module.exports = {
     name: 'help',
