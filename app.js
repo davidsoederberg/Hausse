@@ -4,6 +4,8 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const { prefix, token } = require('./config');
 
+const stockAsCommand = require('./commands/aktieAsCommand');
+
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -24,7 +26,11 @@ client.on('message', (message) => {
 
     const command = client.commands.get(commandName)
         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-    if (!command) return;
+    if (!command) {
+        console.log(commandName);
+        stockAsCommand.execute(message, commandName);
+        return;
+    }
 
     if (falseArguments(command, args, message)) {
         return;
