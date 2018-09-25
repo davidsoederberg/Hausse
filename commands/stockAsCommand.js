@@ -2,8 +2,8 @@ const stockData = require('../scripts/search');
 const sharePrice = require('../scripts/realtime');
 
 module.exports = {
-    'name': 'aktieAsCommand',
-    'aliases': ['stock'],
+    'name': 'stockAsCommand',
+    'aliases': [],
     'args': false,
     'usage': false,
     'description': 'PLACEHOLDER',

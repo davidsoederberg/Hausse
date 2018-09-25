@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const client = new Discord.Client();
 const { prefix, token, database } = require('./config');
 
-const stockAsCommand = require('./commands/aktieAsCommand');
+const stockAsCommand = require('./commands/stockAsCommand');
 
 // DATABASE
 mongoose.connect(database, { useNewUrlParser: true });
