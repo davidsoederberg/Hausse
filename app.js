@@ -1,10 +1,14 @@
 const fs = require('fs');
 const Discord = require('discord.js');
+const mongoose = require('mongoose');
 
 const client = new Discord.Client();
-const { prefix, token } = require('./config');
+const { prefix, token, database } = require('./config');
 
 const stockAsCommand = require('./commands/aktieAsCommand');
+
+// DATABASE
+mongoose.connect(database, { useNewUrlParser: true });
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
