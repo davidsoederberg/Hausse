@@ -6,5 +6,5 @@ const watchlist = new Schema({
     stocks: [{ type: String }],
 });
 
-
-module.exports = mongoose.model('Watchlist', watchlist);
+const watchlistModel = mongoose.model('Watchlist', watchlist)
+module.exports = watchlistModel;
