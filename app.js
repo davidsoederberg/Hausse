@@ -8,6 +8,7 @@ const { prefix, token, database } = require('./config');
 const stockAsCommand = require('./commands/stockAsCommand');
 
 // DATABASE
+mongoose.Promise = global.Promise;
 mongoose.connect(database, { useNewUrlParser: true });
 
 client.commands = new Discord.Collection();
