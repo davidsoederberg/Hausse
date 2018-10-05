@@ -4,7 +4,7 @@ const stock = new Stocks({ 'apiKey': config.apiKey });
 
 const INTERVAL = '1min', AMOUNT = 1;
 
-exports.realTimeSharePrice = async (ticker) => {
+exports.realTimeSharePrice = (ticker) => {
     return stock.timeSeries({
         symbol: ticker,
         interval: INTERVAL,
