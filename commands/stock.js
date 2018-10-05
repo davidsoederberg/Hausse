@@ -29,11 +29,12 @@ module.exports = {
 async function findStock(stockName) {
     return await stockData.search(stockName);
 }
-
+/*
 async function findRealTimePrice(ticker) {
     const realTimePrice = await sharePrice.realTimeSharePrice(ticker);
     return realTimePrice[0].close;
 }
+*/
 
 function mostRelevantStock(stocks) {
     if(stocks.length === 1) {
@@ -58,7 +59,8 @@ function singleStock(stock, message) {
             const reply = realTimePrice ? `**${name}**: ${price}${currency}` : `**${name}**: ${price}${currency} (15 min fördröjning)`;
             return message.reply(reply);
         })
-        .catch(() => {
+        .catch(e => {
+            console.error(e);
             return message.reply('Error');
         });
 }
@@ -81,13 +83,11 @@ function multipleStocks(stocksArr, message) {
 async function stockPrice(stock) {
     const { realTimePrice, ticker, price } = stock;
     if(realTimePrice) {
-        const realTimePricePromise = findRealTimePrice(ticker);
-        return await realTimePricePromise.then(resolve => {
-            return resolve;
-        })
-            .catch(() => {
-                return price;
-            });
+        const found = await sharePrice.realTimeSharePrice(ticker);
+        if(found.length === 0) {
+            return price;
+        }
+        return found[0].close;
     }
     else {
         return price;
