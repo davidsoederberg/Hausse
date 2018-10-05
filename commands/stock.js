@@ -10,52 +10,15 @@ module.exports = {
     execute(message, args) {
         const stocks = findStock(args);
         stocks.then(res => {
-            if(res.length > 1) {
-                const stocksArr = mostRelevantStock(res);
-                if(!stocksArr.length && stocksArr.realtimePrice) {
-                    const stock = stocksArr;
-                    const realTimePrice = findRealTimePrice(stock.ticker);
-                    realTimePrice.then(price => {
-                        return message.reply(`${stock.name}: ${price}${stock.currency}`);
-                    });
-                }
-                else if(!stocksArr.length) {
-                    const stock = stocksArr;
-                    return message.reply(`**${stock.name}**: ${stock.price}${stock.currency} (15 min fördröjning)`);
-                }
-                else {
-                    const realTimePricePromise = [];
-                    stocksArr.forEach(stock => {
-                        if(stock.country === 'SE' || stock.country === 'US') {
-                            const realTimePrice = findRealTimePrice(stock.ticker);
-                            realTimePricePromise.push(realTimePrice);
-                        }
-                        else {
-                            realTimePricePromise.push(new Promise(resolve => {
-                                resolve(stock.price);
-                            }));
-                        }
-                    });
-                    Promise.all(realTimePricePromise).then(prices => {
-                        let reply = prices.length === 1 ? '' : 'Hittade dessa: ';
-                        stocksArr.forEach((stock, index) => {
-                            reply += `**${stock.name}** ${prices[index]} ${stock.currency}`;
-                            reply += index + 1 === stocksArr.length ? '' : ', ';
-                        });
-                        return message.reply(reply);
-                    });
-                }
-            }
-            else if(res[0].realtimePrice) {
-                const stock = res[0];
-                const realTimePrice = findRealTimePrice(stock.ticker);
-                realTimePrice.then(price => {
-                    message.reply(`${stock.name}: ${price}${stock.currency}`);
-                });
+            const stocksArr = mostRelevantStock(res);
+            if(!stocksArr.length) {
+                // Single stock found
+                return singleStock(stocksArr, message);
             }
             else {
-                const stock = res[0];
-                message.reply(`**${stock.name}**: ${stock.price}${stock.currency} (15 min fördröjning)`);
+                console.log(stocksArr);
+                // Multiple stocks found
+                return multipleStocks(stocksArr, message);
             }
         }).catch(reject => {
             message.reply(reject);
@@ -73,11 +36,60 @@ async function findRealTimePrice(ticker) {
 }
 
 function mostRelevantStock(stocks) {
-    const relevantStocks = [];
-    stocks.forEach(stock => {
-        if(stock.country === 'SE') {
-            relevantStocks.push(stock);
-        }
+    if(stocks.length === 1) {
+        return stocks[0];
+    }
+    else {
+        let relevantStocks = [];
+        stocks.forEach(stock => {
+            if (stock.country === 'SE') {
+                relevantStocks = [...relevantStocks, stock];
+            }
+        });
+        return relevantStocks.length === 0 ? stocks[0] : relevantStocks;
+    }
+}
+
+function singleStock(stock, message) {
+    const { name, currency, realTimePrice } = stock;
+    const pricePromise = stockPrice(stock);
+    pricePromise
+        .then(price => {
+            const reply = realTimePrice ? `**${name}**: ${price}${currency}` : `**${name}**: ${price}${currency} (15 min fördröjning)`;
+            return message.reply(reply);
+        })
+        .catch(() => {
+            return message.reply('Error');
+        });
+}
+
+function multipleStocks(stocksArr, message) {
+    let realTimePricePromise = [];
+    stocksArr.forEach((stock) => {
+        realTimePricePromise = [ ...realTimePricePromise, stockPrice(stock)];
     });
-    return relevantStocks.length === 0 ? stocks[0] : relevantStocks;
+    Promise.all(realTimePricePromise).then(prices => {
+        let reply = prices.length === 1 ? '' : 'Hittade dessa: ';
+        stocksArr.forEach(({ name, currency }, index) => {
+            reply += `**${name}** ${prices[index]} ${currency}`;
+            reply += index + 1 === stocksArr.length ? '' : ', ';
+        });
+        return message.reply(reply);
+    });
+}
+
+async function stockPrice(stock) {
+    const { realTimePrice, ticker, price } = stock;
+    if(realTimePrice) {
+        const realTimePricePromise = findRealTimePrice(ticker);
+        return await realTimePricePromise.then(resolve => {
+            return resolve;
+        })
+            .catch(() => {
+                return price;
+            });
+    }
+    else {
+        return price;
+    }
 }
