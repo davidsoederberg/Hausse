@@ -7,15 +7,14 @@ exports.search = function(stockName) {
                 return reject('ERROR');
             }
             else{
-                const result = [];
+                let result = [];
                 const data = JSON.parse(body);
                 if(data.totalNumberOfHits === 0) {
                     return reject('Ingen träff');
                 }
                 const stockArray = data.hits[0].topHits.slice(0, 3);
                 stockArray.forEach(stock => {
-                    const stockObject = buildStockObject(stock);
-                    result.push(stockObject);
+                    result = [ ...result, buildStockObject(stock) ];
                 });
                 resolve(result);
             }
@@ -24,12 +23,13 @@ exports.search = function(stockName) {
 };
 
 function buildStockObject(stock) {
+    const { name, currency, flagCode, tickerSymbol, lastPrice } = stock;
     const stockObject = {};
-    stockObject.name = stock.name;
-    stockObject.currency = stock.currency;
-    stockObject.ticker = stock.flagCode === 'SE' ? stock.tickerSymbol.replace(' ', '-').concat('.st') : stock.tickerSymbol.replace(' ', '-');
-    stockObject.realtimePrice = (stock.flagCode === 'US' || stock.flagCode === 'SE');
-    stockObject.price = stock.lastPrice;
-    stockObject.country = stock.flagCode;
+    stockObject.name = name;
+    stockObject.currency = currency;
+    stockObject.ticker = flagCode === 'SE' ? tickerSymbol.replace(' ', '-').concat('.st') : tickerSymbol.replace(' ', '-');
+    stockObject.realTimePrice = (flagCode === 'US' || flagCode === 'SE');
+    stockObject.price = lastPrice;
+    stockObject.country = flagCode;
     return stockObject;
 }
