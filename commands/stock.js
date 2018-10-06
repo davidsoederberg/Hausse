@@ -67,7 +67,7 @@ function singleStock(stock, message) {
 
 function multipleStocks(stocksArr, message) {
     let realTimePricePromise = [];
-    stocksArr.forEach((stock) => {
+    stocksArr.forEach(stock => {
         realTimePricePromise = [ ...realTimePricePromise, stockPrice(stock)];
     });
     Promise.all(realTimePricePromise).then(prices => {

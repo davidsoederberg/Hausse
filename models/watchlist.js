@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const watchlist = new Schema({
     userId: String,
-    stocks: [{ type: String }],
+    stocks: [],
 });
 
-const watchlistModel = mongoose.model('Watchlist', watchlist)
+const watchlistModel = mongoose.model('Watchlist', watchlist);
 module.exports = watchlistModel;
