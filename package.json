@@ -15,7 +15,7 @@
     "mongoose": "5.2.17",
     "nodemon": "1.18.4",
     "request": "2.88.0",
-    "stocks.js": "0.0.17"
+    "stocks.js": "github:davidsoederberg/stocks.js"
   },
   "devDependencies": {
     "eslint": "5.5.0",

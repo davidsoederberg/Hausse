@@ -83,11 +83,13 @@ function multipleStocks(stocksArr, message) {
 async function stockPrice(stock) {
     const { realTimePrice, ticker, price } = stock;
     if(realTimePrice) {
-        const found = await sharePrice.realTimeSharePrice(ticker);
-        if(found.length === 0) {
+        try{
+            const found = await sharePrice.realTimeSharePrice(ticker);
+            return found[0].close;
+        }
+        catch(e) {
             return price;
         }
-        return found[0].close;
     }
     else {
         return price;
