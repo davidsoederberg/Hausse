@@ -8,4 +8,4 @@ The bot can reply with the price of a stock or multiplestocks depending on your 
 
 ## Authors
 
-* **David Söderberg** -  - [PurpleBooth](https://github.com/davidsoederberg)
+* **David Söderberg** -  - [davidsoederberg](https://github.com/davidsoederberg)
