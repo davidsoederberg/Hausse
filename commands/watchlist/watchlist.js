@@ -9,18 +9,25 @@ module.exports = {
     usage: false,
     description: 'PLACEHOLDEr',
     async execute(message, args) {
-        // TODO FIX ALL MESSAGE REPLIES
-        // TODO do not add to watchlist if it does not exist
-        // TODO create with args
         const userId = message.author.id;
         const foundWatchlist = await findOneWatchlist(userId);
         if(args.length === 0) {
             if(!foundWatchlist) {
                 const newWatchlist = await createNewWatchlist(userId, null);
-                return message.reply(newWatchlist.stocks);
+                return message.reply(`${newWatchlist.stocks[0].name} lades till på din bevakningslista`);
             }
             else {
-                return message.reply(foundWatchlist.stocks.toString());
+                let realTimePricePromise = [];
+                foundWatchlist.stocks.forEach(stock => {
+                    realTimePricePromise = [ ...realTimePricePromise, stockPrice(stock)];
+                });
+                Promise.all(realTimePricePromise).then(prices => {
+                    let reply = prices.length === 1 ? '' : 'Din bevakningslista: \n\n';
+                    foundWatchlist.stocks.forEach(({ name, currency }, index) => {
+                        reply += `**${name}** ${prices[index]} ${currency}\n`;
+                    });
+                    return message.reply(reply);
+                });
             }
         }
         else {
@@ -29,14 +36,17 @@ module.exports = {
             if(stocks.indexOf(stockName) > -1) {
                 stocks = stocks.filter((element => element !== stockName));
             }
-            else {
+            else if(await (checkIfExist(stockName))) {
                 const stockObject = await stockData.search(stockName);
                 const stock = stockObject[0];
                 delete stock.price;
                 stocks.push(stock);
+                await findOneAndUpdateWatchlist(userId, stocks);
+                return message.reply(`${stockName} lades till på din bevakningslista`);
             }
-            const updatedWatchlist = await findOneAndUpdateWatchlist(userId, stocks);
-            return message.reply(updatedWatchlist.stocks);
+            else {
+                return message.reply('Ingen aktie vid det namnet eller ticker');
+            }
         }
     },
 };
@@ -46,7 +56,6 @@ async function createNewWatchlist(newUserId, stock) {
     watchlist.userId = newUserId;
     watchlist.stocks = stock ? [stock] : [];
     return await watchlist.save();
-
 }
 
 async function findOneWatchlist(searchUserId) {
@@ -55,6 +64,29 @@ async function findOneWatchlist(searchUserId) {
 
 async function findOneAndUpdateWatchlist(searchUserId, newStocks) {
     return await Watchlist.findOneAndUpdate({ userId: searchUserId }, { $set: { stocks: newStocks } },
-        { upsert: true, new: true });
+        { upsert: true });
+}
+
+async function checkIfExist(stockName) {
+    const stocks = await stockData.search(stockName);
+    return stocks.length > 0;
+}
+
+async function stockPrice(stock) {
+    const { realTimePrice, ticker, name } = stock;
+    const stocks = await stockData.search(name);
+    const price = stocks.length ? stocks[0].price : stocks.price;
+    if(realTimePrice) {
+        try{
+            const found = await sharePrice.realTimeSharePrice(ticker);
+            return found[0].close;
+        }
+        catch(e) {
+            return price;
+        }
+    }
+    else {
+        return price;
+    }
 }
 
