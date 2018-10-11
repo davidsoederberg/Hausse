@@ -1,22 +1,38 @@
 const fs = require('fs');
 const Discord = require('discord.js');
+const mongoose = require('mongoose');
 
 const client = new Discord.Client();
+
 // const { prefix, token } = require('./config');
 const prefix = '!';
 const token = process.env.token;
+const database = process.env.database;
 
-const stockAsCommand = require('./commands/aktieAsCommand');
+const stockAsCommand = require('./commands/stockAsCommand');
+
+// DATABASE
+mongoose.Promise = global.Promise;
+mongoose.connect(database, { useNewUrlParser: true });
 
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+let commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFilesWatchlist = fs.readdirSync('./commands/watchlist').filter(file => file.endsWith('.js'));
+
+commandFiles = commandFiles.concat(commandFilesWatchlist);
 
 client.on('ready', () => {
     console.log('Ready!');
 });
 
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    let command;
+    try {
+        command = require(`./commands/${file}`);
+    }
+    catch(err) {
+        command = require(`./commands/watchlist/${file}`);
+    }
     client.commands.set(command.name, command);
 }
 
@@ -29,7 +45,6 @@ client.on('message', (message) => {
     const command = client.commands.get(commandName)
         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     if (!command) {
-        console.log(commandName);
         stockAsCommand.execute(message, commandName);
         return;
     }
