@@ -33,8 +33,11 @@ module.exports = {
         else {
             const stockName = args[0];
             let stocks = foundWatchlist.stocks;
-            if(stocks.indexOf(stockName) > -1) {
-                stocks = stocks.filter((element => element !== stockName));
+            console.log(alreadyExistInWatchlist(stockName, stocks));
+            if(alreadyExistInWatchlist(stockName, stocks)) {
+                stocks = removeExistingStock(stockName, stocks);
+                await findOneAndUpdateWatchlist(userId, stocks);
+                return message.reply(`${stockName} togs bort från din bevakningslista`);
             }
             else if(await (checkIfExist(stockName))) {
                 const stockObject = await stockData.search(stockName);
@@ -88,5 +91,26 @@ async function stockPrice(stock) {
     else {
         return price;
     }
+}
+
+function alreadyExistInWatchlist(stockName, stocks) {
+    let exist = false;
+    stocks.forEach(stock => {
+        if(stock.name.toLowerCase().includes(stockName.toLowerCase())) {
+            exist = true;
+        }
+    });
+    return exist;
+}
+
+function removeExistingStock(stockName, stocks) {
+    stocks.forEach((stock, index, object) => {
+        if(stock.name.toLowerCase().includes(stockName.toLowerCase())) {
+            console.log(object);
+            object.splice(index, 1);
+            console.log(object);
+        }
+    });
+    return stocks;
 }
 
