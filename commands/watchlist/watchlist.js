@@ -4,7 +4,7 @@ const sharePrice = require('../../scripts/realtime');
 
 module.exports = {
     name: 'bevakning',
-    aliases: ['watchlist'],
+    aliases: ['watchlist', 'b'],
     args: false,
     usage: false,
     description: 'PLACEHOLDEr',
