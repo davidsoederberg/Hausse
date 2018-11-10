@@ -16,7 +16,6 @@ module.exports = {
                 return singleStock(stocksArr, message);
             }
             else {
-                console.log(stocksArr);
                 // Multiple stocks found
                 return multipleStocks(stocksArr, message);
             }
