@@ -17,7 +17,7 @@ module.exports = {
         else if(args.length === 0) {
             await toggleNotification(userId);
             const { active } = await findNotificationList(userId);
-            const msg = active ? 'aktiverad' : 'deaktiverad';
+            const msg = active ? 'deaktiverad' : 'aktiverad';
             return message.reply(`Notisfunktionen har blivit ${msg}`);
         }
         else {

@@ -4,14 +4,16 @@ const searchPrice = require('./search');
 const realTimePrice = require('./realtime');
 
 exports.startNotificationService = (client) => {
-    Cron.schedule('*/5 * * * *', () => {
+    Cron.schedule('*/1 * * * *', () => {
         NotificationList.find({}, (err, Lists) => {
             if(err) {
                 console.log(err);
             }
             else {
                 Lists.forEach(userList => {
-                    checkPrice(userList, client);
+                    if(userList.active) {
+                        checkPrice(userList, client);
+                    }
                 });
             }
         });
@@ -21,15 +23,22 @@ exports.startNotificationService = (client) => {
 function checkPrice(userList, client) {
     userList.stocks.forEach(stock => {
         const updatedPricePromise = getCurrentPrice(stock);
-        updatedPricePromise.then(updatedPrice => {
-            if(Math.abs(updatedPrice - stock.lastPrice) > stock.interval) {
+        updatedPricePromise.then(stockObject => {
+            const updatedPrice = stockObject[0].close;
+            console.log(updatedPrice);
+            console.log(roundInterval(stock.interval, stock.lastPrice));
+            console.log(Math.abs(updatedPrice - roundInterval(stock.interval, stock.lastPrice)));
+            if(Math.abs(updatedPrice - roundInterval(stock.interval, stock.lastPrice)) > stock.interval) {
+
                 stock.lastPrice = updatedPrice;
-                userList.save();
+                updateLastPrice(userList.userId, userList.stocks);
 
                 const msgdiff = updatedPrice - stock.lastPrice > 0 ? 'upp' : 'ner';
                 const msg = `${stock.name} gick ${msgdiff} till ${updatedPrice}${stock.currency}`;
                 return sendDM(client, userList.userId, msg);
             }
+        }).catch(e => {
+            console.log(e);
         });
     });
 }
@@ -47,4 +56,20 @@ async function getCurrentPrice(stock) {
     else {
         return searchPrice.search(stock.name);
     }
+}
+
+function updateLastPrice(searchUserId, stocks) {
+    NotificationList.findOne({ userId: searchUserId }, (err, userList) => {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            userList.stocks = stocks;
+            userList.save();
+        }
+    });
+}
+
+function roundInterval(interval, price) {
+    return parseInt(price / interval) * interval;
 }
