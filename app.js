@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const mongoose = require('mongoose');
-
+const NotifcationService = require('./scripts/notificationService');
 const client = new Discord.Client();
 
 // const { prefix, token } = require('./config');
@@ -16,13 +16,12 @@ mongoose.Promise = global.Promise;
 mongoose.connect(database, { useNewUrlParser: true });
 
 client.commands = new Discord.Collection();
-let commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-const commandFilesWatchlist = fs.readdirSync('./commands/watchlist').filter(file => file.endsWith('.js'));
-
-commandFiles = commandFiles.concat(commandFilesWatchlist);
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 client.on('ready', () => {
-    console.log('Ready!');
+    console.log('Starting bot...');
+    NotifcationService.startNotificationService(client);
+    console.log('Notification service started');
 });
 
 for (const file of commandFiles) {
