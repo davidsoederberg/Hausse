@@ -1,6 +1,6 @@
-const Watchlist = require('../../models/watchlist');
-const stockData = require('../../scripts/search');
-const sharePrice = require('../../scripts/realtime');
+const Watchlist = require('../models/watchlist');
+const stockData = require('../scripts/search');
+const sharePrice = require('../scripts/realtime');
 
 module.exports = {
     name: 'bevakning',
@@ -33,7 +33,6 @@ module.exports = {
         else {
             const stockName = args[0];
             let stocks = foundWatchlist.stocks;
-            console.log(alreadyExistInWatchlist(stockName, stocks));
             if(alreadyExistInWatchlist(stockName, stocks)) {
                 stocks = removeExistingStock(stockName, stocks);
                 await findOneAndUpdateWatchlist(userId, stocks);
