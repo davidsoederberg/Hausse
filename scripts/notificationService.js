@@ -4,7 +4,7 @@ const searchPrice = require('./search');
 const realTimePrice = require('./realtime');
 
 exports.startNotificationService = (client) => {
-    Cron.schedule('*/1 * * * *', () => {
+    Cron.schedule('*/5 * * * *', () => {
         NotificationList.find({}, (err, Lists) => {
             if(err) {
                 console.log(err);
