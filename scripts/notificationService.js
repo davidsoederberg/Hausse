@@ -25,15 +25,12 @@ function checkPrice(userList, client) {
         const updatedPricePromise = getCurrentPrice(stock);
         updatedPricePromise.then(stockObject => {
             const updatedPrice = stockObject[0].close;
-            console.log(updatedPrice);
-            console.log(roundInterval(stock.interval, stock.lastPrice));
-            console.log(Math.abs(updatedPrice - roundInterval(stock.interval, stock.lastPrice)));
             if(Math.abs(updatedPrice - roundInterval(stock.interval, stock.lastPrice)) > stock.interval) {
 
                 stock.lastPrice = updatedPrice;
                 updateLastPrice(userList.userId, userList.stocks);
 
-                const msgdiff = updatedPrice - stock.lastPrice > 0 ? 'upp' : 'ner';
+                const msgdiff = updatedPrice - roundInterval(stock.interval, stock.lastPrice) > 0 ? 'upp' : 'ner';
                 const msg = `${stock.name} gick ${msgdiff} till ${updatedPrice}${stock.currency}`;
                 return sendDM(client, userList.userId, msg);
             }
