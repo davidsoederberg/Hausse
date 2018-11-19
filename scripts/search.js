@@ -1,8 +1,9 @@
 const request = require('request');
+const config = require('../config.json');
 
 exports.search = function(stockName) {
     return new Promise((resolve, reject) => {
-        request(`https://www.avanza.se/_mobile/market/search/STOCK?query=${stockName}`, (error, response, body) => {
+        request(config.searchURL + stockName, (error, response, body) => {
             if(error) {
                 return reject('ERROR');
             }

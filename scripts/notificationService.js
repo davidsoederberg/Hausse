@@ -25,9 +25,6 @@ function checkPrice(userList, client) {
         const updatedPricePromise = getCurrentPrice(stock);
         updatedPricePromise.then(stockObject => {
             const updatedPrice = stockObject[0].close;
-            console.log(updatedPrice);
-            console.log(roundInterval(stock.interval, stock.lastPrice));
-            console.log(Math.abs(updatedPrice - roundInterval(stock.interval, stock.lastPrice)));
             if(Math.abs(updatedPrice - roundInterval(stock.interval, stock.lastPrice)) > stock.interval) {
 
                 stock.lastPrice = updatedPrice;
