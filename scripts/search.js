@@ -2,7 +2,7 @@ const request = require('request');
 
 exports.search = function(stockName) {
     return new Promise((resolve, reject) => {
-        request(`https://www.avanza.se/_mobile/market/search/STOCK?query=${stockName}`, (error, response, body) => {
+        request(process.env.searchURL + stockName, (error, response, body) => {
             if(error) {
                 return reject('ERROR');
             }
