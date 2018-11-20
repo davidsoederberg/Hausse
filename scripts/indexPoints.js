@@ -1,6 +1,6 @@
 const request = require('request');
 const cheerio = require('cheerio');
-const indices = process.env.indices;
+const indices = JSON.parse(process.env.indices);
 const indexURL = process.env.indexURL;
 
 exports.indexPoints = (indexName, message) => {
