@@ -8,7 +8,7 @@ const indexPoints = require('./scripts/indexPoints');
 const prefix = '!';
 const token = process.env.token;
 const database = process.env.database;
-const indices = process.env.indices;
+const indices = JSON.parse(process.env.indices);
 
 const stockAsCommand = require('./commands/stockAsCommand');
 
