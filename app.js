@@ -3,7 +3,8 @@ const Discord = require('discord.js');
 const mongoose = require('mongoose');
 const NotifcationService = require('./scripts/notificationService');
 const client = new Discord.Client();
-const { prefix, token, database } = require('./config');
+const { prefix, token, database, indices } = require('./config');
+const indexPoints = require('./scripts/indexPoints');
 
 const stockAsCommand = require('./commands/stockAsCommand');
 
@@ -36,6 +37,12 @@ client.on('message', (message) => {
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
+
+    // If commandName is in the array of indices available
+    if(Object.keys(indices).indexOf(commandName) > -1) {
+        indexPoints.indexPoints(commandName, message);
+        return;
+    }
 
     const command = client.commands.get(commandName)
         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
