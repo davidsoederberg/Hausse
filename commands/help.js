@@ -1,5 +1,4 @@
 // const { prefix } = require('../config');
-
 const prefix = process.env.prefix;
 
 module.exports = {

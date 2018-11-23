@@ -30,7 +30,7 @@ function checkPrice(userList, client) {
                 stock.lastPrice = updatedPrice;
                 updateLastPrice(userList.userId, userList.stocks);
 
-                const msgdiff = updatedPrice - roundInterval(stock.interval, stock.lastPrice) > 0 ? 'upp' : 'ner';
+                const msgdiff = diffMessage(updatedPrice, stock.lastPrice);
                 const msg = `${stock.name} gick ${msgdiff} till ${updatedPrice}${stock.currency}`;
                 return sendDM(client, userList.userId, msg);
             }
@@ -69,4 +69,8 @@ function updateLastPrice(searchUserId, stocks) {
 
 function roundInterval(interval, price) {
     return parseInt(price / interval) * interval;
+}
+
+function diffMessage(updatedPrice, lastPrice) {
+    return updatedPrice - lastPrice ? 'upp' : 'ner';
 }
