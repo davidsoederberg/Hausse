@@ -1,6 +1,6 @@
 // const { prefix } = require('../config');
 
-const prefix = '!';
+const prefix = process.env.prefix;
 
 module.exports = {
     name: 'help',

@@ -1,16 +1,21 @@
+// Process variables
+require('dotenv').config();
+
 const fs = require('fs');
 const Discord = require('discord.js');
 const mongoose = require('mongoose');
 const NotifcationService = require('./scripts/notificationService');
 const client = new Discord.Client();
 const indexPoints = require('./scripts/indexPoints');
-const { prefix, token, database, indices } = require('./config');
+// const { prefix, token, database, indices } = require('./config');
+
+const indicesJSON = JSON.parse(process.env.indices);
 
 const stockAsCommand = require('./commands/stockAsCommand');
 
 // DATABASE
 mongoose.Promise = global.Promise;
-mongoose.connect(database, { useNewUrlParser: true });
+mongoose.connect(process.env.database, { useNewUrlParser: true });
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -33,13 +38,13 @@ for (const file of commandFiles) {
 }
 
 client.on('message', (message) => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (!message.content.startsWith(process.env.prefix) || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).split(/ +/);
+    const args = message.content.slice(process.env.prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     // If commandName is in the array of indices available
-    if(Object.keys(indices).indexOf(commandName) > -1) {
+    if(Object.keys(indicesJSON).indexOf(commandName) > -1) {
         indexPoints.indexPoints(commandName, message);
         return;
     }
@@ -68,7 +73,7 @@ function falseArguments(command, args, message) {
     if (command.args && !args.length) {
         let reply = `You didn't provide any arguments, ${message.author}!`;
         if (command.usage) {
-            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+            reply += `\nThe proper usage would be: \`${process.env.prefix}${command.name} ${command.usage}\``;
         }
 
         message.channel.send(reply);
@@ -76,4 +81,4 @@ function falseArguments(command, args, message) {
     }
 }
 
-client.login(token);
+client.login(process.env.token);

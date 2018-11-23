@@ -1,11 +1,10 @@
 const request = require('request');
 const cheerio = require('cheerio');
-
-const { indexURL, indices } = require('../config');
-
+// const { indexURL, indices } = require('../config');
+const indicesJSON = JSON.parse(process.env.indices);
 exports.indexPoints = (indexName, message) => {
-    const index = indices[indexName];
-    request(indexURL + index, (error, response, html) => {
+    const index = indicesJSON[indexName];
+    request(process.env.indexURL + index, (error, response, html) => {
         if(error) {
             console.log(error);
         }

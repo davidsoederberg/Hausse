@@ -1,9 +1,9 @@
 const request = require('request');
-const { searchURL } = require('../config');
+// const { searchURL } = require('../config');
 
 exports.search = function(stockName) {
     return new Promise((resolve, reject) => {
-        request(searchURL + stockName, (error, response, body) => {
+        request(process.env.searchURL + stockName, (error, response, body) => {
             if(error) {
                 return reject('ERROR');
             }

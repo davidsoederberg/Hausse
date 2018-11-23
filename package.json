@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "node app.js"
   },
   "author": "David Söderberg",
@@ -20,9 +20,12 @@
     "stocks.js": "github:davidsoederberg/stocks.js"
   },
   "devDependencies": {
+    "chai": "4.2.0",
+    "dotenv": "6.1.0",
     "eslint": "5.5.0",
     "eslint-config-airbnb-base": "13.1.0",
-    "eslint-plugin-import": "2.14.0"
+    "eslint-plugin-import": "2.14.0",
+    "mocha": "5.2.0"
   },
   "nodemonConfig": {
     "restartable": "rs",
