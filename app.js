@@ -1,5 +1,5 @@
-// Process variables
-require('dotenv').config();
+// Process variables for development
+//require('dotenv').config();
 
 const fs = require('fs');
 const Discord = require('discord.js');
