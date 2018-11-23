@@ -34,7 +34,7 @@ module.exports = {
         else {
             const stockName = args[0];
             let stocks = foundWatchlist.stocks;
-            if(listFunctions.alreadyExistInList(stockName, stocks)) {
+            if(listFunctions.alreadyExistInStocks(stockName, stocks)) {
                 stocks = listFunctions.removeExistingStock(stockName, stocks);
                 await findOneAndUpdateWatchlist(userId, stocks);
                 return message.reply(`${stockName} togs bort från din bevakningslista`);

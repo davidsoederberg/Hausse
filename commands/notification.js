@@ -70,7 +70,7 @@ async function updateNotificationList(searchUserId, stockName, interval) {
         }
         else {
             const stocks = userNotification.stocks;
-            if(!listFunctions.alreadyExistInList(stockName, userNotification.stocks)) {
+            if(!listFunctions.alreadyExistInStocks(stockName, userNotification.stocks)) {
                 userNotification.stocks.push(stock);
                 userNotification.save();
             }
