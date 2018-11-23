@@ -1,5 +1,6 @@
 const NotificationList = require('../models/notification');
 const searchStock = require('../scripts/search');
+const listFunctions = require('../scripts/listFunctions');
 
 module.exports = {
     'name': 'notification',
@@ -23,7 +24,7 @@ module.exports = {
         else {
             const stockName = args[0];
             const interval = args[1];
-            if(await checkIfExist(stockName) || interval <= 0) {
+            if(await listFunctions.checkIfExist(stockName) || interval <= 0) {
                 await updateNotificationList(userId, stockName, interval);
                 return message.reply('Din notificationslista har blivit uppdaterad');
             }
@@ -69,38 +70,14 @@ async function updateNotificationList(searchUserId, stockName, interval) {
         }
         else {
             const stocks = userNotification.stocks;
-            if(!alreadyExistInNotificationList(stockName, userNotification.stocks)) {
+            if(!listFunctions.alreadyExistInList(stockName, userNotification.stocks)) {
                 userNotification.stocks.push(stock);
                 userNotification.save();
             }
             else {
-                userNotification.stocks = removeExistingStock(stockName, stocks);
+                userNotification.stocks = listFunctions.removeExistingStock(stockName, stocks);
                 userNotification.save();
             }
         }
     });
-}
-
-async function checkIfExist(stockName) {
-    const stocks = await searchStock.search(stockName);
-    return stocks.length > 0;
-}
-
-function alreadyExistInNotificationList(stockName, stocks) {
-    let exist = false;
-    stocks.forEach(stock => {
-        if(stock.name.toLowerCase().includes(stockName.toLowerCase())) {
-            exist = true;
-        }
-    });
-    return exist;
-}
-
-function removeExistingStock(stockName, stocks) {
-    stocks.forEach((stock, index, object) => {
-        if(stock.name.toLowerCase().includes(stockName.toLowerCase())) {
-            object.splice(index, 1);
-        }
-    });
-    return stocks;
 }

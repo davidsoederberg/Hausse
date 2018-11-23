@@ -1,6 +1,7 @@
 const Watchlist = require('../models/watchlist');
 const stockData = require('../scripts/search');
 const sharePrice = require('../scripts/realtime');
+const listFunctions = require('../scripts/listFunctions');
 
 module.exports = {
     name: 'bevakning',
@@ -33,12 +34,12 @@ module.exports = {
         else {
             const stockName = args[0];
             let stocks = foundWatchlist.stocks;
-            if(alreadyExistInWatchlist(stockName, stocks)) {
-                stocks = removeExistingStock(stockName, stocks);
+            if(listFunctions.alreadyExistInList(stockName, stocks)) {
+                stocks = listFunctions.removeExistingStock(stockName, stocks);
                 await findOneAndUpdateWatchlist(userId, stocks);
                 return message.reply(`${stockName} togs bort från din bevakningslista`);
             }
-            else if(await (checkIfExist(stockName))) {
+            else if(await (listFunctions.checkIfExist(stockName))) {
                 const stockObject = await stockData.search(stockName);
                 const stock = stockObject[0];
                 delete stock.price;
@@ -69,11 +70,6 @@ async function findOneAndUpdateWatchlist(searchUserId, newStocks) {
         { upsert: true });
 }
 
-async function checkIfExist(stockName) {
-    const stocks = await stockData.search(stockName);
-    return stocks.length > 0;
-}
-
 async function stockPrice(stock) {
     const { realTimePrice, ticker, name } = stock;
     const stocks = await stockData.search(name);
@@ -90,26 +86,5 @@ async function stockPrice(stock) {
     else {
         return price;
     }
-}
-
-function alreadyExistInWatchlist(stockName, stocks) {
-    let exist = false;
-    stocks.forEach(stock => {
-        if(stock.name.toLowerCase().includes(stockName.toLowerCase())) {
-            exist = true;
-        }
-    });
-    return exist;
-}
-
-function removeExistingStock(stockName, stocks) {
-    stocks.forEach((stock, index, object) => {
-        if(stock.name.toLowerCase().includes(stockName.toLowerCase())) {
-            console.log(object);
-            object.splice(index, 1);
-            console.log(object);
-        }
-    });
-    return stocks;
 }
 

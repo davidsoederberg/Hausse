@@ -4,11 +4,7 @@ const mongoose = require('mongoose');
 const NotifcationService = require('./scripts/notificationService');
 const client = new Discord.Client();
 const indexPoints = require('./scripts/indexPoints');
-
-const prefix = '!';
-const token = process.env.token;
-const database = process.env.database;
-const indices = JSON.parse(process.env.indices);
+const { prefix, token, database, indices } = require('./config');
 
 const stockAsCommand = require('./commands/stockAsCommand');
 
