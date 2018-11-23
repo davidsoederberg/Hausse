@@ -1,5 +1,8 @@
 // Process variables for development
-//require('dotenv').config();
+if(process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 
 const fs = require('fs');
 const Discord = require('discord.js');
@@ -27,13 +30,8 @@ client.on('ready', () => {
 });
 
 for (const file of commandFiles) {
-    let command;
-    try {
-        command = require(`./commands/${file}`);
-    }
-    catch(err) {
-        command = require(`./commands/watchlist/${file}`);
-    }
+
+    const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
 }
 
